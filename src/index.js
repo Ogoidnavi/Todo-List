@@ -1,3 +1,4 @@
+import 'normalize.css';
 import { TodoList } from './components/TodoList';
 import { TodoItem } from './components/TodoItem';
 import DateFormatter from './utils/DateFormatter';
