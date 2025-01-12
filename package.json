@@ -1,5 +1,5 @@
 {
-	"name": "webdevtemplate",
+	"name": "todolist",
 	"version": "1.0.0",
 	"main": "index.js",
 	"scripts": {
@@ -22,6 +22,7 @@
 		"webpack-merge": "^6.0.1"
 	},
 	"dependencies": {
+		"date-fns": "^4.1.0",
 		"normalize.css": "^8.0.1"
 	}
 }
