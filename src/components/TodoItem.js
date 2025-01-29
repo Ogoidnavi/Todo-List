@@ -16,7 +16,7 @@ class TodoItem {
 			throw new Error('Invalid priority level');
 		}
 
-		this.id = Date.now();
+		this.id = crypto.randomUUID();
 		this.title = title;
 		this.description = description;
 		this.dueDate = dateFormatter.format(dueDate);

@@ -1,63 +1,24 @@
-class TodoListEvents {
-	constructor() {
-		this.listeners = new Map();
-	}
-
-	on(event, callback) {
-		if (!this.listeners.has(event)) {
-			this.listeners.set(event, new Set());
-		}
-		this.listeners.get(event).add(callback);
-	}
-
-	emit(event, data) {
-		if (this.listeners.has(event)) {
-			this.listeners.get(event).forEach(callback => callback(data));
-		}
-	}
-}
-
-class TodoStorage {
-	constructor() {
-		this.todos = new Map();
-	}
-
-	add(todo) {
-		this.todos.set(todo.id, todo);
-	}
-
-	remove(todoId) {
-		this.todos.delete(todoId);
-	}
-
-	get(todoId) {
-		return this.todos.get(todoId);
-	}
-
-	getAll() {
-		return Array.from(this.todos.values());
-	}
-}
-
-class TodoFilters {
-	byPriority(todos, priority) {
-		return todos.filter(todo => todo.priority === priority);
-	}
-
-	byStatus(todos, isDone) {
-		return todos.filter(todo => todo.done === isDone);
-	}
-
-	byDueDate(todos, date) {
-		return todos.filter(todo => todo.dueDate === date);
-	}
-}
+import { BaseStorage } from '../utils/BaseStorage';
+import { EventEmitter } from '../utils/EventEmitter';
+import { TodoFilters } from '../utils/TodoFilters';
 
 class TodoList {
 	constructor() {
-		this.storage = new TodoStorage();
-		this.events = new TodoListEvents();
+		this.storage = new BaseStorage();
+		this.events = new EventEmitter();
 		this.filters = new TodoFilters();
+
+		this.events.on('todoAdded', todo => {
+			console.log('Todo added:', todo.title);
+		});
+
+		this.events.on('todoRemoved', todo => {
+			console.log('Todo removed:', todo.title);
+		});
+
+		this.events.on('todoUpdated', todo => {
+			console.log('Todo updated:', todo.title);
+		});
 	}
 
 	add(todo) {
@@ -81,20 +42,18 @@ class TodoList {
 		}
 	}
 
-	getFiltered({ priority, status, dueDate }) {
-		let todos = this.storage.getAll();
+	getFiltered(options = {}) {
+		const { priority, status, dueDate, search, sortBy } = options;
 
-		if (priority) {
-			todos = this.filters.byPriority(todos, priority);
-		}
-		if (status !== undefined) {
-			todos = this.filters.byStatus(todos, status);
-		}
-		if (dueDate) {
-			todos = this.filters.byDueDate(todos, dueDate);
-		}
+		this.filters.reset();
 
-		return todos;
+		if (priority) this.filters.byPriority(priority);
+		if (status !== undefined) this.filters.byStatus(status);
+		if (dueDate) this.filters.byDueDateRange(dueDate.start, dueDate.end);
+		if (search) this.filters.bySearch(search);
+		if (sortBy) this.filters.sortBy(sortBy.field, sortBy.ascending);
+
+		return this.filters.apply(this.storage.getAll());
 	}
 }
 

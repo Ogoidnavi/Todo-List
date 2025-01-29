@@ -1,6 +1,10 @@
 {
 	"name": "todolist",
 	"version": "1.0.0",
+	"engines": {
+		"node": ">=20.17.0",
+		"npm": ">=10.0.0"
+	},
 	"main": "index.js",
 	"scripts": {
 		"start": "webpack serve --mode development --open --config webpack.dev.js",
