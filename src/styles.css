@@ -1,0 +1,31 @@
+.container {
+	display: flex;
+	padding: 20px;
+	gap: 20px;
+}
+
+#projects-panel,
+#todos-panel {
+	flex: 1;
+	padding: 20px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+.project-item,
+.todo-item {
+	margin: 10px 0;
+	padding: 10px;
+	border: 1px solid #eee;
+	border-radius: 4px;
+}
+
+.priority.high {
+	color: red;
+}
+.priority.medium {
+	color: orange;
+}
+.priority.low {
+	color: green;
+}
