@@ -8,7 +8,7 @@ class TodoItem {
 		dateFormatter,
 		priorityValidator
 	) {
-		if (!title || !description || !dueDate || !priority) {
+		if (!title || !description) {
 			throw new Error('Required fields missing');
 		}
 
