@@ -1,6 +1,6 @@
-import { BaseStorage } from '../utils/BaseStorage';
-import { EventEmitter } from '../utils/EventEmitter';
-import { TodoFilters } from '../utils/TodoFilters';
+import { BaseStorage } from '../../utils/BaseStorage';
+import { EventEmitter } from '../../utils/EventEmitter';
+import { TodoFilters } from '../../utils/TodoFilters';
 
 class TodoList {
 	constructor() {
