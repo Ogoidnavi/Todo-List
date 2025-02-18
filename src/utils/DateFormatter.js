@@ -19,4 +19,4 @@ class DateFormatter {
 	}
 }
 
-export default DateFormatter;
+export { DateFormatter };

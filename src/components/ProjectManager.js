@@ -1,4 +1,4 @@
-import { TodoList } from './TodoList';
+import { TodoList } from './todo/TodoList';
 import { EventEmitter } from '../utils/EventEmitter';
 
 class ProjectManager {
@@ -6,22 +6,31 @@ class ProjectManager {
 		this.projects = new Map();
 		this.activeProjectId = null;
 		this.events = new EventEmitter();
+		this.initializeProjectEvents();
+	}
 
-		// Setup event listeners
-		this.events.on('projectCreated', project => {
-			console.log('Project created:', project.name);
+	initializeProjectEvents() {
+		const projectEvents = [
+			'projectCreated',
+			'projectUpdated',
+			'projectDeleted',
+			'activeProjectChanged',
+		];
+
+		projectEvents.forEach(eventName => {
+			this.events.on(eventName, project => {
+				console.log(`${eventName}:`, project?.name);
+			});
 		});
+	}
 
-		this.events.on('projectUpdated', project => {
-			console.log('Project updated:', project.name);
-		});
+	listenToActiveTodoList() {
+		const todoEvents = ['todoAdded', 'todoRemoved', 'todoUpdated'];
 
-		this.events.on('activeProjectChanged', project => {
-			console.log('Active project changed:', project.name);
-		});
-
-		this.events.on('projectDeleted', project => {
-			console.log('Project deleted:', project.name);
+		todoEvents.forEach(eventName => {
+			this.getActiveList()?.events.on(eventName, todo => {
+				this.events.emit(eventName, todo);
+			});
 		});
 	}
 
@@ -43,6 +52,16 @@ class ProjectManager {
 		return project;
 	}
 
+	updateProject(projectId, updates) {
+		const project = this.projects.get(projectId);
+		if (project) {
+			Object.assign(project, updates);
+			this.events.emit('projectUpdated', project);
+			return project;
+		}
+		return null;
+	}
+
 	deleteProject(projectId) {
 		const project = this.projects.get(projectId);
 		if (project) {
@@ -60,6 +79,7 @@ class ProjectManager {
 	setActiveProject(projectId) {
 		if (this.projects.has(projectId)) {
 			this.activeProjectId = projectId;
+			this.listenToActiveTodoList();
 			this.events.emit('activeProjectChanged', this.getActiveProject());
 		}
 	}
@@ -82,6 +102,7 @@ class ProjectManager {
 		const list = this.getActiveList();
 		if (list) {
 			list.add(todo);
+			this.events.emit('todoAdded', todo);
 		}
 	}
 
@@ -89,6 +110,7 @@ class ProjectManager {
 		const list = this.getActiveList();
 		if (list) {
 			list.remove(todoId);
+			this.events.emit('todoRemoved', todoId);
 		}
 	}
 
