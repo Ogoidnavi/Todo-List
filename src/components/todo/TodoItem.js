@@ -1,3 +1,5 @@
+import { formatDate } from '../../utils/DateFormatter';
+
 class TodoItem {
 	constructor(
 		title,
@@ -5,10 +7,9 @@ class TodoItem {
 		dueDate,
 		priority,
 		notes = '',
-		dateFormatter,
 		priorityValidator
 	) {
-		if (!title || !description || !dueDate || !priority) {
+		if (!title || !description) {
 			throw new Error('Required fields missing');
 		}
 
@@ -19,10 +20,10 @@ class TodoItem {
 		this.id = crypto.randomUUID();
 		this.title = title;
 		this.description = description;
-		this.dueDate = dateFormatter.format(dueDate);
+		this.dueDate = formatDate(dueDate);
 		this.priority = priority;
 		this.notes = notes;
-		this.createdAt = dateFormatter.format(new Date());
+		this.createdAt = formatDate(new Date());
 		this.done = false;
 	}
 

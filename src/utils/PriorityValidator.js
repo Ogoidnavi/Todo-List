@@ -4,8 +4,10 @@ class PriorityValidator {
 	}
 
 	isValid(priority) {
-		return this.validPriorities.includes(priority);
+		return this.validPriorities.includes(
+			priority[0].toUpperCase() + priority.slice(1).toLowerCase()
+		);
 	}
 }
 
-export default PriorityValidator;
+export { PriorityValidator };

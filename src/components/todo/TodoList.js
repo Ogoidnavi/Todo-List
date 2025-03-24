@@ -1,6 +1,7 @@
-import { BaseStorage } from '../utils/BaseStorage';
-import { EventEmitter } from '../utils/EventEmitter';
-import { TodoFilters } from '../utils/TodoFilters';
+import { BaseStorage } from '../../utils/BaseStorage';
+import { EventEmitter } from '../../utils/EventEmitter';
+import { TodoFilters } from '../../utils/TodoFilters';
+import { formatDate } from '../../utils/DateFormatter';
 
 class TodoList {
 	constructor() {
@@ -49,7 +50,8 @@ class TodoList {
 
 		if (priority) this.filters.byPriority(priority);
 		if (status !== undefined) this.filters.byStatus(status);
-		if (dueDate) this.filters.byDueDateRange(dueDate.start, dueDate.end);
+		if (dueDate)
+			this.filters.byDueDateRange(formatDate(new Date()), dueDate.value);
 		if (search) this.filters.bySearch(search);
 		if (sortBy) this.filters.sortBy(sortBy.field, sortBy.ascending);
 
