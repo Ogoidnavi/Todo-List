@@ -1,6 +1,8 @@
 import { ModalBase } from './ModalBase';
 import { CreateElement } from '../CreateElement';
 import { TodoItem } from '../../../components/todo/TodoItem';
+import { formatFromInput } from '../../../utils/DateFormatter';
+import { formatForInput } from '../../../utils/DateFormatter';
 
 export class TodoModal {
 	constructor(modalManager) {
@@ -50,11 +52,7 @@ export class TodoModal {
 		});
 
 		const dueDateInput = this.modalBase.createInput({
-			value: this.todo
-				? this.modalManager.dateFormatter.formatForInput(
-						this.todo.dueDate
-				  )
-				: '',
+			value: this.todo ? formatForInput(this.todo.dueDate) : '',
 			attributes: {
 				type: 'date',
 				placeholder: 'Due Date',
@@ -70,6 +68,7 @@ export class TodoModal {
 		const { confirmBtn, cancelBtn } = this.modalBase.createModalButtons(
 			this.todo
 		);
+
 		confirmBtn.addEventListener('click', () => {
 			this.handleSubmit({
 				titleInput,
@@ -104,9 +103,7 @@ export class TodoModal {
 			this.projectManager.updateTodo(this.todo.id, {
 				title: titleInput.value,
 				description: descriptionInput.value,
-				dueDate: this.modalManager.dateFormatter.formatFromInput(
-					dueDateInput.value
-				),
+				dueDate: formatFromInput(dueDateInput.value),
 				priority: prioritySelect.value,
 				notes: notesInput.value,
 			});
@@ -118,7 +115,6 @@ export class TodoModal {
 					dueDateInput.value,
 					prioritySelect.value,
 					notesInput.value,
-					this.modalManager.dateFormatter,
 					this.modalManager.priorityValidator
 				)
 			);

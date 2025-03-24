@@ -1,12 +1,10 @@
 import { CreateElement } from './CreateElement';
 import { TodoModal } from './Modal/TodoModal';
 import { ProjectModal } from './Modal/ProjectModal';
-import { DateFormatter } from '../../utils/DateFormatter';
 import { PriorityValidator } from '../../utils/PriorityValidator';
 
 export class ModalManager {
 	constructor() {
-		this.dateFormatter = new DateFormatter();
 		this.priorityValidator = new PriorityValidator();
 		this.activeModal = null;
 		this.projectModal = new ProjectModal(this);

@@ -121,9 +121,19 @@ class ProjectManager {
 		}
 	}
 
-	getFilteredTodos(options) {
+	getProjectFilteredTodos(options) {
 		const list = this.getActiveList();
 		return list ? list.getFiltered(options) : [];
+	}
+
+	getAllFilteredTodos(projectList = [], filterOptions = {}) {
+		return projectList.flatMap(project =>
+			project.todoList.getFiltered(filterOptions).map(todo => ({
+				...todo,
+				projectId: project.id,
+				projectName: project.name,
+			}))
+		);
 	}
 }
 

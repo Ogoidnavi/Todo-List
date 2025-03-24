@@ -1,5 +1,7 @@
 import { ModalManager } from './components/ModalManager';
 import { CreateElement } from './components/CreateElement';
+import { getTimeRemaining } from '../utils/DateFormatter';
+import { addDays, formatDate } from 'date-fns';
 
 class DOMHandler {
 	constructor(projectManager) {
@@ -82,7 +84,7 @@ class DOMHandler {
 		});
 		const dueDate = CreateElement.create('span', {
 			className: 'due-date',
-			textContent: todo.dueDate || 'No deadline',
+			textContent: getTimeRemaining(todo.dueDate),
 		});
 		const priority = CreateElement.create('div', {
 			className: todo.priority.toLowerCase(),
@@ -131,8 +133,8 @@ class DOMHandler {
 		});
 
 		if (
-			this.projectManager.getFilteredTodos() &&
-			this.projectManager.getFilteredTodos().length > 0
+			this.projectManager.getProjectFilteredTodos() &&
+			this.projectManager.getProjectFilteredTodos().length > 0
 		) {
 			activeProject.todoList.storage.getAll().forEach(todo => {
 				const todoItem = this.createTodoItem(todo);
@@ -167,24 +169,14 @@ class DOMHandler {
 			},
 		});
 
-		const deleteButton = CreateElement.create('button', {
-			className: 'delete-button',
-			textContent: 'Delete Project',
-			listeners: {
-				click: () => {
-					this.projectManager.deleteProject(activeProject.id);
-				},
-			},
-		});
-
 		const projectHeader = CreateElement.create('h2', {
 			textContent: activeProject.name,
 		});
 
 		const todoListView = this.renderTodoList(activeProject);
 
-		[backButton, deleteButton, projectHeader, todoListView].forEach(
-			element => projectView.appendChild(element)
+		[backButton, projectHeader, todoListView].forEach(element =>
+			projectView.appendChild(element)
 		);
 		this.mainContainer.appendChild(projectView);
 	}
@@ -192,6 +184,10 @@ class DOMHandler {
 	renderProjects() {
 		const projects = this.projectManager.getAllProjects();
 		const activeId = this.projectManager.activeProjectId;
+		const allTodos = this.projectManager.getAllFilteredTodos(projects);
+		const todosDueTomorrow = allTodos.filter(todo => {
+			getTimeRemaining(todo.dueDate) === 'Due in 1 day';
+		});
 
 		this.mainContainer.innerHTML = '';
 
@@ -215,9 +211,25 @@ class DOMHandler {
 				textContent: project.name,
 			});
 
-			projectElement.appendChild(projectTitle);
+			const deleteButton = CreateElement.create('button', {
+				className: 'delete-button',
+				textContent: 'Delete Project',
+				listeners: {
+					click: e => {
+						e.stopPropagation();
+						this.projectManager.deleteProject(project.id);
+					},
+				},
+			});
+
+			[projectTitle, deleteButton].forEach(element =>
+				projectElement.appendChild(element)
+			);
+
 			this.mainContainer.appendChild(projectElement);
 		});
+		console.log(allTodos);
+		console.log(todosDueTomorrow);
 	}
 
 	initializeEvents() {
